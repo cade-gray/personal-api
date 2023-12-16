@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const Login = require("./routes/Login");
 const Logout = require("./routes/Logout");
 const Wedding = require("./routes/Wedding");
+const PullJoke = require("./routes/PullJoke");
 
 app.use(cors());
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use(
 app.use("/login", Login);
 app.use("/logout", Logout);
 app.use("/wedding", Wedding);
+app.use("/pulljoke", PullJoke);
 
 // Post rsvp data to wedding database
 // app.post("/wedding/guest", (req, res) => {
