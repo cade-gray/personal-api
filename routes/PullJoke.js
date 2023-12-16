@@ -9,6 +9,7 @@
     TODOS: 
     - Update password to something more secure
     - Add error handling for when the API is down or returns an error
+    - Swap out Password for a token based authentication system thats already in place.
 
 */
 const express = require("express");
