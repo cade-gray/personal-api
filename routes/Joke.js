@@ -10,6 +10,23 @@ const authenticateToken = require("../lib/authenticateToken");
 router.use((req, res, next) => {
   next();
 });
+
+router.post("/all", authenticateToken, (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM jokes order by jokeid desc",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling jokes from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        console.log(results);
+        res.json(results);
+      }
+    }
+  );
+});
+
 router.post("/", authenticateToken, (req, res) => {
   const { joke } = req.body;
   const connection = mysql.createConnection(process.env.DATABASE_URL);
