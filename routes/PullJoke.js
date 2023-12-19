@@ -14,12 +14,13 @@
 */
 const express = require("express");
 const router = express.Router();
+const authenticateToken = require("../lib/authenticateToken");
 
 router.use((req, res, next) => {
   next();
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authenticateToken, async (req, res) => {
   const url = "https://dad-jokes.p.rapidapi.com/random/joke";
   const options = {
     method: "GET",
@@ -28,7 +29,10 @@ router.post("/", async (req, res) => {
       "X-RapidAPI-Host": "dad-jokes.p.rapidapi.com",
     },
   };
-  if (req.body.password !== "password") {
+  if (
+    req.body.password.password !==
+    "pw4extrasecurityincasetokeniscompromisednotmuchsecurebutbetterthannothing"
+  ) {
     res.json({
       success: false,
       messsage: "Denied",
@@ -37,23 +41,27 @@ router.post("/", async (req, res) => {
     try {
       const response = await fetch(url, options);
       const result = await response.json();
-      console.log(result);
-      if (result.success === false) {
+      // Error returned from Dad Jokes API.  Likely quota exceeded.
+      if (!result.success) {
         res.json({
           success: false,
+          error: result.message,
         });
       } else {
+        // Success, return the joke
         const setup = result.body[0].setup;
         const punchline = result.body[0].punchline;
         res.json({
+          success: true,
           setup: setup,
           punchline: punchline,
         });
       }
     } catch (error) {
-      console.error(error);
+      // Error returned from fetch
       res.json({
         success: false,
+        error: error,
       });
     }
   }
