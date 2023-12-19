@@ -20,7 +20,6 @@ router.post("/all", authenticateToken, (req, res) => {
         console.error("Error pulling jokes from database:", err);
         return res.status(500).json({ error: "Internal server error" });
       } else {
-        console.log(results);
         res.json(results);
       }
     }
@@ -35,7 +34,6 @@ router.post("/", authenticateToken, (req, res) => {
       console.error("Error pulling jokeid from database:", err);
       return res.status(500).json({ error: "Internal server error" });
     } else {
-      console.log(result);
       var jokeid = result[0].jokeid + 1; // assuming result[0].jokeid gives the max jokeid
       connection.query(
         "INSERT INTO jokes (jokeid, setup, punchline) VALUES (?, ?, ?)",
@@ -54,7 +52,6 @@ router.post("/", authenticateToken, (req, res) => {
               .status(500)
               .json({ success: false, error: "Internal server error" });
           }
-          console.log(result);
           return res
             .status(200)
             .json({ success: true, message: "Joke inserted successfully" });
