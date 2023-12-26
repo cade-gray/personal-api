@@ -1,6 +1,6 @@
 /**
  * Joke.js
- * Endpoint for inserting jokes into the database.
+ * Endpoints for Joke and joke sequence related requests.
  * Created By: Cade Gray.
  */
 const express = require("express");
@@ -9,6 +9,21 @@ const mysql = require("mysql2");
 const authenticateToken = require("../lib/authenticateToken");
 router.use((req, res, next) => {
   next();
+});
+
+router.get("/", (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM personal.jokes WHERE jokeid IN (SELECT sequenceNbr FROM personal.sequences)",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling jokes from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
 });
 
 router.post("/all", authenticateToken, (req, res) => {
