@@ -76,4 +76,36 @@ router.post("/", authenticateToken, (req, res) => {
     connection.end();
   });
 });
+
+router.post("/getsequence", authenticateToken, (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM personal.sequences where sequenceName = 'JokeOfDay'",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling sequences from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
+router.post("/updatesequence", authenticateToken, (req, res) => {
+  const { sequenceNbr } = req.body;
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "UPDATE personal.sequences SET sequenceNbr = ? WHERE sequenceName = 'JokeOfDay'",
+    [sequenceNbr],
+    function (err, results) {
+      if (err) {
+        console.error("Error updating sequence in database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
 module.exports = router;
