@@ -51,8 +51,8 @@ router.post("/", authenticateToken, (req, res) => {
     } else {
       var jokeid = result[0].jokeid + 1; // assuming result[0].jokeid gives the max jokeid
       connection.query(
-        "INSERT INTO jokes (jokeid, setup, punchline) VALUES (?, ?, ?)",
-        [jokeid, joke.setup, joke.punchline],
+        "INSERT INTO jokes (jokeid, setup, punchline, formattedPunchline) VALUES (?, ?, ?, ?)",
+        [jokeid, joke.setup, joke.punchline, joke.formattedPunchline],
         (err, result) => {
           if (err) {
             console.error("Error inserting joke into database:", err);
