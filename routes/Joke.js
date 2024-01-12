@@ -108,4 +108,19 @@ router.post("/updatesequence", authenticateToken, (req, res) => {
     }
   );
 });
+
+router.get("/count", (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT count(*) as count FROM personal.jokes",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling joke count from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
 module.exports = router;
