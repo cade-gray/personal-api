@@ -108,7 +108,7 @@ router.post("/updatesequence", authenticateToken, (req, res) => {
         if (results.affectedRows > 0) {
           res.json({ success: true });
         } else {
-          res.json({ success: false, error: results });
+          res.status(500).json({ success: false, error: results });
         }
       }
     }
