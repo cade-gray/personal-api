@@ -101,9 +101,16 @@ router.post("/updatesequence", authenticateToken, (req, res) => {
     function (err, results) {
       if (err) {
         console.error("Error updating sequence in database:", err);
-        return res.status(500).json({ error: "Internal server error" });
+        return res
+          .status(500)
+          .json({ success: false, error: "Internal server error" });
       } else {
-        res.json(results);
+        console.log(results.affectedRows);
+        if (results.affectedRows > 0) {
+          res.json({ success: true });
+        } else {
+          res.json({ success: false, error: results });
+        }
       }
     }
   );
