@@ -64,7 +64,7 @@ router.post("/all", authenticateToken, (req, res) => {
 router.get("/all/weblist", (req, res) => {
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   connection.query(
-    "SELECT jokeid, setu FROM jokes order by jokeid desc",
+    "SELECT jokeid, setup FROM jokes order by jokeid desc",
     function (err, results) {
       if (err) {
         console.error("Error pulling jokes from database:", err);
