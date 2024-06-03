@@ -26,6 +26,26 @@ router.get("/", (req, res) => {
   );
 });
 
+router.get("/:id", (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM personal.jokes WHERE jokeid = ?",
+    [req.params.id],
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling joke from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        if (results.length > 0) {
+          res.json(results[0]);
+        } else {
+          res.status(404).json({ error: "Joke not found" });
+        }
+      }
+    }
+  );
+});
+
 router.post("/all", authenticateToken, (req, res) => {
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   connection.query(
