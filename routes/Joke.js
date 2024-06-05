@@ -24,6 +24,7 @@ router.get("/", (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.get("/:id", (req, res) => {
@@ -44,6 +45,7 @@ router.get("/:id", (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.post("/all", authenticateToken, (req, res) => {
@@ -59,6 +61,7 @@ router.post("/all", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.get("/all/weblist", (req, res) => {
@@ -74,6 +77,7 @@ router.get("/all/weblist", (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.post("/", authenticateToken, (req, res) => {
@@ -125,6 +129,7 @@ router.post("/getsequence", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.post("/submission", (req, res) => {
@@ -168,6 +173,7 @@ router.post("/submission/all", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.post("/updatesequence", authenticateToken, (req, res) => {
@@ -191,6 +197,7 @@ router.post("/updatesequence", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.get("/count", (req, res) => {
@@ -206,5 +213,6 @@ router.get("/count", (req, res) => {
       }
     }
   );
+  connection.end();
 });
 module.exports = router;
