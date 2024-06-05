@@ -155,6 +155,21 @@ router.post("/submission", (req, res) => {
   connection.end();
 });
 
+router.post("/submission/all", authenticateToken, (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM jokesubmission order by submissionid desc",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling joke submissions from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+});
+
 router.post("/updatesequence", authenticateToken, (req, res) => {
   const { sequenceNbr } = req.body;
   const connection = mysql.createConnection(process.env.DATABASE_URL);
