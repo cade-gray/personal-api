@@ -127,6 +127,34 @@ router.post("/getsequence", authenticateToken, (req, res) => {
   );
 });
 
+router.post("/submission", (req, res) => {
+  const { joke } = req.body;
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "INSERT INTO jokesubmission (setup, punchline, source) VALUES (?, ?, ?)",
+    [joke.setup, joke.punchline, joke.source],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting joke into database:", err);
+        if (err.code === "ER_DATA_TOO_LONG") {
+          return res.status(413).json({
+            success: false,
+            error:
+              "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
+          });
+        }
+        return res
+          .status(500)
+          .json({ success: false, error: "Internal server error" });
+      }
+      return res
+        .status(200)
+        .json({ success: true, message: "Joke submitted successfully" });
+    }
+  );
+  connection.end();
+});
+
 router.post("/updatesequence", authenticateToken, (req, res) => {
   const { sequenceNbr } = req.body;
   const connection = mysql.createConnection(process.env.DATABASE_URL);
