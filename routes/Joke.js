@@ -24,6 +24,28 @@ router.get("/", (req, res) => {
       }
     }
   );
+  connection.end();
+});
+
+router.get("/:id", (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM personal.jokes WHERE jokeid = ?",
+    [req.params.id],
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling joke from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        if (results.length > 0) {
+          res.json(results[0]);
+        } else {
+          res.status(404).json({ error: "Joke not found" });
+        }
+      }
+    }
+  );
+  connection.end();
 });
 
 router.post("/all", authenticateToken, (req, res) => {
@@ -39,6 +61,23 @@ router.post("/all", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
+});
+
+router.get("/all/weblist", (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT jokeid, setup FROM jokes order by jokeid desc",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling jokes from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+  connection.end();
 });
 
 router.post("/", authenticateToken, (req, res) => {
@@ -90,6 +129,51 @@ router.post("/getsequence", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
+});
+
+router.post("/submission", (req, res) => {
+  const { joke } = req.body;
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "INSERT INTO jokesubmission (setup, punchline, source) VALUES (?, ?, ?)",
+    [joke.setup, joke.punchline, joke.source],
+    (err, result) => {
+      if (err) {
+        console.error("Error inserting joke into database:", err);
+        if (err.code === "ER_DATA_TOO_LONG") {
+          return res.status(413).json({
+            success: false,
+            error:
+              "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
+          });
+        }
+        return res
+          .status(500)
+          .json({ success: false, error: "Internal server error" });
+      }
+      return res
+        .status(200)
+        .json({ success: true, message: "Joke submitted successfully" });
+    }
+  );
+  connection.end();
+});
+
+router.post("/submission/all", authenticateToken, (req, res) => {
+  const connection = mysql.createConnection(process.env.DATABASE_URL);
+  connection.query(
+    "SELECT * FROM jokesubmission order by submissionid desc",
+    function (err, results) {
+      if (err) {
+        console.error("Error pulling joke submissions from database:", err);
+        return res.status(500).json({ error: "Internal server error" });
+      } else {
+        res.json(results);
+      }
+    }
+  );
+  connection.end();
 });
 
 router.post("/updatesequence", authenticateToken, (req, res) => {
@@ -113,6 +197,7 @@ router.post("/updatesequence", authenticateToken, (req, res) => {
       }
     }
   );
+  connection.end();
 });
 
 router.get("/count", (req, res) => {
@@ -128,5 +213,6 @@ router.get("/count", (req, res) => {
       }
     }
   );
+  connection.end();
 });
 module.exports = router;
