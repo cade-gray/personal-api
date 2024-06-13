@@ -27,7 +27,7 @@ router.get("/", (req, res) => {
   connection.end();
 });
 
-router.get("/:id", (req, res) => {
+router.get("/id/:id", (req, res) => {
   const connection = mysql.createConnection(process.env.DATABASE_URL);
   connection.query(
     "SELECT * FROM personal.jokes WHERE jokeid = ?",
