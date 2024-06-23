@@ -9,6 +9,7 @@ const Logout = require("./routes/Logout");
 const Wedding = require("./routes/Wedding");
 const PullJoke = require("./routes/PullJoke");
 const Joke = require("./routes/Joke");
+const Projects = require("./routes/Projects");
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
@@ -22,6 +23,7 @@ app.use("/logout", Logout);
 app.use("/wedding", Wedding);
 app.use("/pulljoke", PullJoke);
 app.use("/joke", Joke);
+app.use("/projects", Projects);
 
 // Post rsvp data to wedding database
 // app.post("/wedding/guest", (req, res) => {
