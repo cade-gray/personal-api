@@ -6,7 +6,7 @@ router.use((req, res, next) => {
 });
 router.get("/", (req, res) => {
   const connection = mysql.createConnection(process.env.DATABASE_URL);
-  connection.query("SELECT * FROM projects", function (err, results) {
+  connection.query("SELECT * FROM projects order by projectId desc", function (err, results) {
     if (err) {
     console.log(err);
     res.json(err);
@@ -15,7 +15,6 @@ router.get("/", (req, res) => {
     res.json(results);
     }
   });
-  
   connection.end();
 });
 module.exports = router;
