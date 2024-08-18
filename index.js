@@ -11,6 +11,7 @@ const PullJoke = require("./routes/PullJoke");
 const Joke = require("./routes/Joke");
 const Projects = require("./routes/Projects");
 app.use(cors());
+app.disable("x-powered-by");
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(
@@ -56,4 +57,19 @@ app.use("/projects", Projects);
 
 app.listen(port, () => {
   console.log(`API Server listening at http://localhost:${port}`);
+});
+
+// custom 404
+app.use((req, res, next) => {
+  res.status(404).send("Dear Cade or Hacker, this route does not exist.");
+});
+
+// custom error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res
+    .status(500)
+    .send(
+      "Something is a little screwed up internally, did you break something?"
+    );
 });
