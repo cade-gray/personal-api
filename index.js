@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const helmet = require("helmet");
 const app = express();
 const port = 3030;
 const cors = require("cors");
@@ -11,6 +12,7 @@ const PullJoke = require("./routes/PullJoke");
 const Joke = require("./routes/Joke");
 const Projects = require("./routes/Projects");
 app.use(cors());
+app.use(helmet());
 app.disable("x-powered-by");
 app.use(express.json());
 app.use(bodyParser.json());
