@@ -134,30 +134,39 @@ router.post("/getsequence", authenticateToken, (req, res) => {
 
 router.post("/submission", (req, res) => {
   const { joke } = req.body;
-  const connection = mysql.createConnection(process.env.DATABASE_URL);
-  connection.query(
-    "INSERT INTO jokesubmission (setup, punchline, source) VALUES (?, ?, ?)",
-    [joke.setup, joke.punchline, joke.source],
-    (err, result) => {
-      if (err) {
-        console.error("Error inserting joke into database:", err);
-        if (err.code === "ER_DATA_TOO_LONG") {
-          return res.status(413).json({
-            success: false,
-            error:
-              "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
-          });
+
+  if (joke.setup.length > 255 || joke.punchline.length > 50 || joke.source.length > 45) {
+    return res.status(413).json({
+      success: false,
+      error: "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
+    });
+  }
+  else {
+    const connection = mysql.createConnection(process.env.DATABASE_URL);
+    connection.query(
+      "INSERT INTO jokesubmission (setup, punchline, source) VALUES (?, ?, ?)",
+      [joke.setup, joke.punchline, joke.source],
+      (err, result) => {
+        if (err) {
+          console.error("Error inserting joke into database:", err);
+          if (err.code === "ER_DATA_TOO_LONG") {
+            return res.status(413).json({
+              success: false,
+              error:
+                "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
+            });
+          }
+          return res
+            .status(500)
+            .json({ success: false, error: "Internal server error" });
         }
         return res
-          .status(500)
-          .json({ success: false, error: "Internal server error" });
+          .status(200)
+          .json({ success: true, message: "Joke submitted successfully" });
       }
-      return res
-        .status(200)
-        .json({ success: true, message: "Joke submitted successfully" });
-    }
-  );
-  connection.end();
+    );
+    connection.end();
+  }
 });
 
 router.post("/submission/all", authenticateToken, (req, res) => {
