@@ -133,9 +133,8 @@ router.post("/getsequence", authenticateToken, (req, res) => {
 });
 
 router.post("/submission", (req, res) => {
-  const { joke } = req.body;
-
-  if (joke.setup.length > 255 || joke.punchline.length > 50 || joke.source.length > 45) {
+  const { setup, punchline, source } = req.body;
+  if (setup.length > 255 || punchline.length > 50 || source.length > 45) {
     return res.status(413).json({
       success: false,
       error: "Setup, Punchline, or Source exceeded char limit. Please adjust accordingly.",
@@ -145,7 +144,7 @@ router.post("/submission", (req, res) => {
     const connection = mysql.createConnection(process.env.DATABASE_URL);
     connection.query(
       "INSERT INTO jokesubmission (setup, punchline, source) VALUES (?, ?, ?)",
-      [joke.setup, joke.punchline, joke.source],
+      [setup, punchline, source],
       (err, result) => {
         if (err) {
           console.error("Error inserting joke into database:", err);
